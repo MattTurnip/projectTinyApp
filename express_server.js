@@ -14,13 +14,13 @@ var urlDatabase = {
 
 //generate random string of 6 alphanumeric characters
 function generateRandomString() {
-    let array = [];
+    let text = "";
+    let letNums = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (let i = 0; i < 6; i++) {
-        array.push(Math.floor(Math.random() * 10));
+        text += letNums.charAt(Math.floor(Math.random() * letNums.length));
     }
-    return array.join("");
+    return text;
 }
-
 
 
 app.get("/", (req, res) => {
