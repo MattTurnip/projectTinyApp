@@ -1,3 +1,4 @@
+// USE THIS CODE TO RUN NODEMON : npm start
 var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
