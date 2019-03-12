@@ -16,5 +16,6 @@ and edible **_6-inch sub_**.
 * ༼ つ ◕_◕ ༽つ  ᵘʳˡ your URL is now tiny-fied!
 
 ![alt text](https://media.giphy.com/media/mJ4l3mnBCRR5u/giphy.gif "homer uses tinyurl")
+_how you'll feel looking at long URLS from now on_
 
 **Bye bye for now!**
