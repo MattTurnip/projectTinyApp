@@ -13,10 +13,11 @@
 
 <body style="font-size:20px; padding:50px;">
     <!-- Add EJS code here -->
-    <h1>URL got!</h1>
-    <p>the short URL you requested was: <%= shortURL %></p>
-    <p>the long URL corresponding to that URL is: <%= longURL %></p>
-    <a href='#'>Click here to create new URL</a>
+    <% include ./partials/_header %>
+
+    <h3>Tiny Url for: <%= longURL %></h3>
+    <p><%= shortURL %></p>
+
 
 
 

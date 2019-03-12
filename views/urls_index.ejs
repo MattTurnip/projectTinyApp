@@ -13,9 +13,12 @@
 
 <body style="font-size:20px; padding:50px;">
     <!-- Add EJS code here -->
+    <% include ./partials/_header %>
+
+    <h2>My Urls:</h2>
     <% for (let element in urls) { %>
     <ul>
-        <li><strong>URL id:</strong> <%= element %> <strong>Actual URL:</strong> <%= urls[element] %></li>
+        <li><strong><%= element %></strong>: <%= urls[element] %></li>
     </ul>
     <% } %>
 
