@@ -28,7 +28,12 @@ app.get("/urls", (req, res) => {
     res.render("urls_index", templateVars);
 });
 
-//Adding a Second Route to url_show.ejs and Template
+//adding a route to form page
+app.get("/urls/new", (req, res) => {
+    res.render("urls_new");
+});
+
+//Adding a rout to url_show.ejs and Template
 app.get("/urls/:shortURL", (req, res) => {
     let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
     res.render("urls_show", templateVars);
