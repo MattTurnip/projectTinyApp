@@ -12,6 +12,17 @@ var urlDatabase = {
     "9sm5xK": "http://www.google.com"
 };
 
+//generate randomstring of 6 alphanumeric characters
+function generateRandomString() {
+    let array = [];
+    for (let i = 0; i < 6; i++) {
+        array.push(Math.floor(Math.random() * 10));
+    }
+    return array.join("");
+}
+
+
+
 app.get("/", (req, res) => {
     res.send("Hello!");
 });
