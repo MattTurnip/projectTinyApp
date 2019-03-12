@@ -1,4 +1,6 @@
-#Welcome to the TinyUrl app!
+
+
+# Welcome to the TinyUrl app!
 
 ---
 
@@ -7,7 +9,7 @@ After using TinyUrl, the internet will go from looking like and unmanageable,
 too-much-to-eat **12-foot-long party sub**, to a much more manageable, consumable
 and edible **_6-inch sub_**.
 
-#####There are a few handy ways in which this is done:
+##### There are a few handy ways in which this is done:
 
 * I'm not sure yet
 * ¯\_(ツ)_/¯
