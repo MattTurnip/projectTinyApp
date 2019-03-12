@@ -23,7 +23,6 @@ function generateRandomString() {
     return text;
 }
 
-
 app.get("/", (req, res) => {
     res.send("Hello!");
 });
@@ -31,18 +30,12 @@ app.get("/", (req, res) => {
 app.get("/urls.json", (req, res) => {
     res.json(urlDatabase);
 });
-
-app.get("/hello", (req, res) => {
-    res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
-
 //Sending Data to urls_index.ejs
 app.get("/urls", (req, res) => {
     let templateVars = { urls: urlDatabase };
     res.render("urls_index", templateVars);
 });
 
-//adding a route to form page
 app.get("/urls/new", (req, res) => {
     res.render("urls_new");
 });
@@ -55,7 +48,6 @@ app.post("/urls", (req, res) => {
     }
 });
 
-//Adding a rout to url_show.ejs and Template
 app.get("/urls/:shortURL", (req, res) => {
     let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
     res.render("urls_show", templateVars);
