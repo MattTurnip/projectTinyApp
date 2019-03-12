@@ -16,7 +16,7 @@ var urlDatabase = {
 //generate random string of 6 alphanumeric characters
 function generateRandomString() {
     let text = "";
-    let letNums = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const letNums = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (let i = 0; i < 6; i++) {
         text += letNums.charAt(Math.floor(Math.random() * letNums.length));
     }
@@ -32,7 +32,7 @@ app.get("/urls.json", (req, res) => {
 });
 //Sending Data to urls_index.ejs
 app.get("/urls", (req, res) => {
-    let templateVars = { urls: urlDatabase };
+    const templateVars = { urls: urlDatabase };
     res.render("urls_index", templateVars);
 });
 
@@ -48,8 +48,13 @@ app.post("/urls", (req, res) => {
     }
 });
 
+app.post("/urls/:shortURL/delete", (req, res) => {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect("/urls");
+});
+
 app.get("/urls/:shortURL", (req, res) => {
-    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
     res.render("urls_show", templateVars);
 });
 
