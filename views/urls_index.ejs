@@ -19,19 +19,19 @@
     <% for (let element in urls) { %>
     <ul>
         <li>
+
             <strong><%= element %></strong>: <%= urls[element] %>
             <form method="POST" action="/urls/<%= element %>/delete">
                 <button type="submit" class="btn btn-outline-primary btn-sm">Delete</button>
             </form>
 
-            <form class="form-inline" action="/urls/<%= urls[element] %>/update" method="POST">
-                <div class="form-group mb-2">
-                    <label for="?longURL?">Enter Edited URL:</label>
-                    <input class="form-control" type="text" name="?longURL?" placeholder="http://"
-                        style="width: 300px; margin: 1em">
-                    <button type="submit" class="btn btn-outline-primary btn-sm">Edit <%= urls[element] %></button>
-                </div>
+            <form class="form-inline" action="/urls/<%= element %>/" method="POST">
+
+
+                <button type="submit" class="btn btn-outline-primary btn-sm">Edit</button>
+
             </form>
+
         </li>
     </ul>
     <% } %>
