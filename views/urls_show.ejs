@@ -14,8 +14,6 @@
 <body style="font-size:20px; padding:50px;">
     <!-- Add EJS code here -->
     <% include ./partials/_header %>
-    <a href="/urls/new">Create a new TinyUrl</a>
-    <br>
     <h3>Your Tiny Url is <%= shortURL %></h3>
     <p>
         <a href="http://localhost:8080/u/<%= shortURL %>" target="_blank">http://localhost:8080/u/<%= shortURL %></a>
@@ -27,7 +25,7 @@
             <label for="longURLRename">Edit original URL?</label>
             <input class="form-control" type="text" name="longURLRename" placeholder="<%= longURL %>"
                 style="width: 300px; margin: 1em">
-            <button type="submit" class="btn btn-outline-primary btn-sm">OK</button>
+            <button type="submit" class="btn btn-primary">OK</button>
         </div>
     </form>
 
@@ -36,7 +34,3 @@
 </body>
 
 </html>
-
-
-
-<!-- BUTTON LOGIC FOR EDITING -->

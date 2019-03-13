@@ -14,24 +14,21 @@
 <body style="font-size:20px; padding:50px;">
     <!-- Add EJS code here -->
     <% include ./partials/_header %>
-    <a href="/urls/new">Create a new TinyUrl</a>
     <h3>My Urls:</h3>
     <% for (let element in urls) { %>
     <ul>
         <li>
 
             <strong><%= element %></strong>: <%= urls[element] %>
-            <form method="POST" action="/urls/<%= element %>/delete">
-                <button type="submit" class="btn btn-outline-primary btn-sm">Delete</button>
-            </form>
+            <div class="btn-group" role="group">
+                <form method="POST" action="/urls/<%= element %>/delete">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
 
-            <form class="form-inline" action="/urls/<%= element %>/" method="POST">
-
-
-                <button type="submit" class="btn btn-outline-primary btn-sm">Edit</button>
-
-            </form>
-
+                <form class="form-inline" action="/urls/<%= element %>/" method="POST">
+                    <button type="submit" class="btn btn-primary">Edit</button>
+                </form>
+            </div>
         </li>
     </ul>
     <% } %>
