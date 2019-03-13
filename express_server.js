@@ -113,15 +113,17 @@ app.post("/login", (req, res) => {
 
 //POST register endpoint
 app.post("/register", (req, res) => {
-  const email = req.body.email;
-  const pw = req.body.password;
-  const id = generateRandomString();
-  console.log(id);
-  console.log(email);
-  console.log(pw);
-  users[id] = { id, email, pw };
-  console.log(users);
-  res.redirect("/urls/");
+  if (req.body.email && req.body.password) {
+    const email = req.body.email;
+    const password = req.body.password;
+    const id = generateRandomString();
+    users[id] = { id, email, password };
+    console.log(users);
+    res.redirect("/urls/");
+  } else {
+    res.status(400);
+    res.send("400 status code, Please try filling out the forms!");
+  }
 });
 
 //POST DELETE URL FROM DATABASE
