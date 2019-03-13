@@ -17,7 +17,11 @@
     <a href="/urls/new">Create a new TinyUrl</a>
     <br>
     <h3>Your Tiny Url is <%= shortURL %></h3>
-    <p>When this code is appended to http://localhost:8080/u/ your site should redirect to <%= longURL %></p>
+    <p>
+        <a href="http://localhost:8080/u/<%= shortURL %>" target="_blank">http://localhost:8080/u/<%= shortURL %></a>
+        should redirect
+        you to <%= longURL %>
+    </p>
     <form class="form-inline" action="/urls/<%= shortURL %>/update" method="POST">
         <div class="form-group mb-2">
             <label for="longURLRename">Edit original URL?</label>
