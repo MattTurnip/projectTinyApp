@@ -1,43 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+      crossorigin="anonymous"
+    />
     <title>TinyApp</title>
-</head>
+  </head>
 
-<body style="font-size:20px; padding:50px;">
+  <body style="font-size:20px; padding:50px;">
     <!-- Add EJS code here -->
     <header>
-        <% include partials/_header %>
+      <% include partials/_header %>
     </header>
 
     <h3>My Urls:</h3>
 
     <% for (let element in urls) { %>
     <ul>
-        <li>
+      <li>
+        <strong><%= element %></strong>: <%= urls[element] %>
+        <div class="btn-group" role="group">
+          <form method="POST" action="/urls/<%= element %>/delete">
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
 
-            <strong><%= element %></strong>: <%= urls[element] %>
-            <div class="btn-group" role="group">
-                <form method="POST" action="/urls/<%= element %>/delete">
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-
-                <form class="form-inline" action="/urls/<%= element %>/" method="POST">
-                    <button type="submit" class="btn btn-primary">Edit</button>
-                </form>
-            </div>
-        </li>
+          <form
+            class="form-inline"
+            action="/urls/<%= element %>/"
+            method="POST"
+          >
+            <button type="submit" class="btn btn-primary">Edit</button>
+          </form>
+        </div>
+      </li>
     </ul>
     <% } %>
-
-
-</body>
-
+  </body>
 </html>
