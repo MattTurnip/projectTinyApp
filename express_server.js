@@ -52,10 +52,8 @@ app.post("/urls", (req, res) => {
 
 // upon enter username and press submit route here! this will store the username in req.cookies object
 app.post("/login", (req, res) => {
-    req.cookies.username = req.body.username;
-    console.log("Cookies", req.cookies)
-    console.log("Username", req.body.username)
-    console.log("hello");
+    let username = req.body.username;
+    res.cookie("username", username);
     res.redirect(`/urls/`);
 });
 
