@@ -36,7 +36,8 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-    res.send("hey there this is a stand in for register")
+    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
+    res.render("new_user", templateVars);
 });
 
 //PAGE GO TO URL INDEX
