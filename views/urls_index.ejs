@@ -13,8 +13,12 @@
 
 <body style="font-size:20px; padding:50px;">
     <!-- Add EJS code here -->
-    <% include ./partials/_header %>
+    <header>
+        <% include partials/_header %>
+    </header>
+
     <h3>My Urls:</h3>
+
     <% for (let element in urls) { %>
     <ul>
         <li>
