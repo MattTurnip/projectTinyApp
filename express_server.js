@@ -115,10 +115,12 @@ app.post("/login", (req, res) => {
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const pw = req.body.password;
-  const randomID = generateRandomString();
-  console.log(randomID);
+  const id = generateRandomString();
+  console.log(id);
   console.log(email);
   console.log(pw);
+  users[id] = { id, email, pw };
+  console.log(users);
   res.redirect("/urls/");
 });
 
