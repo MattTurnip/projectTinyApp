@@ -47,9 +47,21 @@ app.post("/urls", (req, res) => {
         res.redirect(`/urls/${key}`);
     }
 });
-
+//delete url from database. uses the short URL to get here.
 app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[req.params.shortURL];
+    res.redirect("/urls");
+});
+
+// edit button goes to individual url page that contains edit !
+app.post("/urls/:id", (req, res) => {
+    res.redirect(`/urls/${req.params.id}`);
+});
+
+// longurl edit. uses the short url to get here
+app.post("/urls/:shortURL/update", (req, res) => {
+    let newName = req.body.longURLRename;
+    urlDatabase[req.params.shortURL] = newName;
     res.redirect("/urls");
 });
 
