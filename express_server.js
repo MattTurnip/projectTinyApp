@@ -1,9 +1,11 @@
 // USE THIS CODE TO RUN NODEMON : npm start
-var express = require("express");
-var app = express();
-var PORT = 8080; // default port 8080
-app.set("view engine", "ejs"); //set ejs as the view engine
+const express = require("express");
+const app = express();
+const cookieParser = require('cookie-parser')
 const bodyParser = require("body-parser");
+const PORT = 8080; // default port 8080
+app.set("view engine", "ejs"); //set ejs as the view engine
+app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
@@ -47,6 +49,13 @@ app.post("/urls", (req, res) => {
         res.redirect(`/urls/${key}`);
     }
 });
+
+// upon enter username and press submit route here!
+app.post("/login", (req, res) => {
+    console.log(req.body.username)
+    console.log("hello");
+});
+
 //delete url from database. uses the short URL to get here.
 app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[req.params.shortURL];
