@@ -8,14 +8,27 @@ app.set("view engine", "ejs"); //set ejs as the view engine
 app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
-
+//DEFAULT URLS
 var urlDatabase = {
     "b2xVn2": "http://www.lighthouselabs.ca",
     "9sm5xK": "http://www.google.com"
 };
 
-//generate random string of 6 alphanumeric characters
+//DEFAULT USERS
+const users = {
+    "userRandomID": {
+        id: "userRandomID",
+        email: "user@example.com",
+        password: "purple-monkey-dinosaur"
+    },
+    "user2RandomID": {
+        id: "user2RandomID",
+        email: "user2@example.com",
+        password: "dishwasher-funk"
+    }
+}
+
+//FUNCTION GEN RANDOM STRING
 function generateRandomString() {
     let text = "";
     const letNums = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -35,6 +48,7 @@ app.get("/urls.json", (req, res) => {
     res.json(urlDatabase);
 });
 
+//PAGE REGISTER
 app.get("/register", (req, res) => {
     const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
     res.render("new_user", templateVars);
