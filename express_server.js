@@ -103,13 +103,13 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls/");
 });
 
-//POST LOGIN
-app.post("/login", (req, res) => {
-  console.log("user logged in");
-  let username = req.body.username;
-  res.cookie("username", username);
-  res.redirect("/urls/");
-});
+//POST SET USERNAME COOKIE
+// app.post("/login", (req, res) => {
+//   console.log("user logged in");
+//   let username = req.body.username;
+//   res.cookie("username", username);
+//   res.redirect("/urls/");
+// });
 
 //POST register endpoint
 app.post("/register", (req, res) => {
@@ -119,6 +119,9 @@ app.post("/register", (req, res) => {
     const id = generateRandomString();
     users[id] = { id, email, password };
     console.log(users);
+    //setting a user_id cookie
+    res.cookie("user_id", id);
+    //--------------
     res.redirect("/urls/");
   } else {
     res.status(400);
