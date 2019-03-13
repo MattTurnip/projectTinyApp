@@ -24,25 +24,41 @@ function generateRandomString() {
     }
     return text;
 }
-
+//PAGE A DUMB PAGE
 app.get("/", (req, res) => {
     res.send("Hello!");
 });
 
+//PAGE JSON OBJECT OF URL DATABASE
 app.get("/urls.json", (req, res) => {
     res.json(urlDatabase);
 });
-//Sending Data to urls_index.ejs
+
+//PAGE GO TO URL INDEX
 app.get("/urls", (req, res) => {
     const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
     res.render("urls_index", templateVars);
 });
 
+//PAGE URLS NEW
 app.get("/urls/new", (req, res) => {
     const templateVars = { username: req.cookies["username"] };
     res.render("urls_new", templateVars);
 });
 
+//PAGE INDIVIDUAL URL WITH EDIT
+app.get("/urls/:shortURL", (req, res) => {
+    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
+    res.render("urls_show", templateVars);
+});
+
+//PAGE REDIRECT TO ACTUAL SITE
+app.get("/u/:shortURL", (req, res) => {
+    const longURL = urlDatabase[req.params.shortURL];
+    res.redirect(longURL);
+});
+
+//POST GENERATE RANDOM STRING LENGTH 6
 app.post("/urls", (req, res) => {
     if (true) {
         let key = generateRandomString();
@@ -51,41 +67,42 @@ app.post("/urls", (req, res) => {
     }
 });
 
-// upon enter username and press submit route here! this will store the username in req.cookies object
-app.post("/login", (req, res) => {
-    let username = req.body.username;
-    res.cookie("username", username);
-    res.redirect(`/urls/`);
+//POST LOGOUT
+app.post("/logout", (req, res) => {
+    console.log("user logged out");
+    res.clearCookie("username");
+    res.redirect("/urls/")
 });
 
-//delete url from database. uses the short URL to get here.
+//POST LOGIN
+app.post("/login", (req, res) => {
+    console.log("user logged in");
+    let username = req.body.username;
+    res.cookie("username", username);
+    res.redirect("/urls/");
+});
+
+//POST DELETE URL FROM DATABASE
 app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[req.params.shortURL];
     res.redirect("/urls");
 });
 
-// edit button goes to individual url page that contains edit !
+//POST DATABASE -> EDIT PAGE (A BUTTON LINK)
 app.post("/urls/:id", (req, res) => {
     res.redirect(`/urls/${req.params.id}`);
 });
 
-// longurl edit. uses the short url to get here
+//POST RENAME
 app.post("/urls/:shortURL/update", (req, res) => {
     let newName = req.body.longURLRename;
     urlDatabase[req.params.shortURL] = newName;
     res.redirect("/urls");
 });
 
-app.get("/urls/:shortURL", (req, res) => {
-    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
-    res.render("urls_show", templateVars);
-});
 
-app.get("/u/:shortURL", (req, res) => {
-    const longURL = urlDatabase[req.params.shortURL];
-    res.redirect(longURL);
-});
 
+//LISTEN IN PORT
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}!`);
 });
