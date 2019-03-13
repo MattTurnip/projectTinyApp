@@ -50,10 +50,13 @@ app.post("/urls", (req, res) => {
     }
 });
 
-// upon enter username and press submit route here!
+// upon enter username and press submit route here! this will store the username in req.cookies object
 app.post("/login", (req, res) => {
-    console.log(req.body.username)
+    req.cookies.username = req.body.username;
+    console.log("Cookies", req.cookies)
+    console.log("Username", req.body.username)
     console.log("hello");
+    res.redirect(`/urls/`);
 });
 
 //delete url from database. uses the short URL to get here.
