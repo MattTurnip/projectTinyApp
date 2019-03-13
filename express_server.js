@@ -24,9 +24,10 @@ function generateRandomString() {
     }
     return text;
 }
-//PAGE A DUMB PAGE
+//PAGE REDIRECT FROM / TO NEW
 app.get("/", (req, res) => {
-    res.send("Hello!");
+    // res.send("Hello!");
+    res.redirect("/urls/new");
 });
 
 //PAGE JSON OBJECT OF URL DATABASE
