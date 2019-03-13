@@ -35,6 +35,10 @@ app.get("/urls.json", (req, res) => {
     res.json(urlDatabase);
 });
 
+app.get("/register", (req, res) => {
+    res.send("hey there this is a stand in for register")
+});
+
 //PAGE GO TO URL INDEX
 app.get("/urls", (req, res) => {
     const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
