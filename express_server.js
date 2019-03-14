@@ -54,20 +54,32 @@ app.get("/register", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies["username"]
+    user_id: null //because there is no user
   };
+  console.log(templateVars);
   res.render("new_user", templateVars);
 });
 
 //PAGE GO TO URL INDEX
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
-  res.render("urls_index", templateVars);
+  if (req.cookies.user_id) {
+    const templateVars = {
+      urls: urlDatabase,
+      user_id: req.cookies.user_id,
+      email: users[req.cookies.user_id]["email"]
+    };
+    res.render("urls_index", templateVars);
+  } else {
+    res.redirect("/register");
+  }
 });
 
 //PAGE URLS NEW
 app.get("/urls/new", (req, res) => {
-  const templateVars = { username: req.cookies["username"] };
+  const templateVars = {
+    user_id: req.cookies.user_id,
+    email: users[req.cookies.user_id]["email"]
+  };
   res.render("urls_new", templateVars);
 });
 
@@ -76,7 +88,8 @@ app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies["username"]
+    user_id: req.cookies.user_id,
+    email: users[req.cookies.user_id]["email"]
   };
   res.render("urls_show", templateVars);
 });
@@ -96,18 +109,16 @@ app.post("/urls", (req, res) => {
   }
 });
 
-//POST LOGOUT
+// POST LOGOUT
 app.post("/logout", (req, res) => {
-  console.log("user logged out");
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/urls/");
 });
 
 //POST SET USERNAME COOKIE
 // app.post("/login", (req, res) => {
 //   console.log("user logged in");
-//   let username = req.body.username;
-//   res.cookie("username", username);
+//   res.cookie("user_id", user_id);
 //   res.redirect("/urls/");
 // });
 
