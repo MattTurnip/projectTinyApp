@@ -53,14 +53,13 @@ function registerUser(email, password) {
 
 //function find if user is in DB
 function find(email, password) {
-    let userArr = Object.values(users);
-    console.log(userArr);
-    for (let i = 0; i < userArr.length; i++) {
-      if (userArr[i].email == email && userArr[i].password == password) {
-        return email  password;
-      }
+  let userArr = Object.values(users);
+  for (let i = 0; i < userArr.length; i++) {
+    if (userArr[i].email == email && userArr[i].password == password) {
+      return userArr[i].id;
     }
   }
+}
 
 //*********GET REQUESTS********
 
@@ -72,12 +71,16 @@ app.get("/", (req, res) => {
 
 //PAGE JSON OBJECT OF URL DATABASE
 app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
+  res.json(users);
 });
 
 //Login page
 app.get("/login", (req, res) => {
-  res.render("login");
+  const templateVars = {
+    user_id: req.cookies.user_id,
+    email: null
+  };
+  res.render("login", templateVars);
 });
 
 //Register Page
@@ -87,18 +90,21 @@ app.get("/register", (req, res) => {
     longURL: urlDatabase[req.params.shortURL],
     user_id: null //because there is no user
   };
-  console.log(templateVars);
   res.render("register", templateVars);
 });
 
 //Url index page
 app.get("/urls", (req, res) => {
-  const templateVars = {
-    urls: urlDatabase,
-    user_id: req.cookies.user_id,
-    email: users[req.cookies.user_id]["email"]
-  };
-  res.render("urls_index", templateVars);
+  if (!req.cookies.user_id) {
+    res.redirect(/login/);
+  } else {
+    const templateVars = {
+      urls: urlDatabase,
+      user_id: req.cookies.user_id,
+      email: users[req.cookies.user_id]["email"]
+    };
+    res.render("urls_index", templateVars);
+  }
 });
 
 //New TinyUrl page
@@ -147,15 +153,15 @@ app.post("/logout", (req, res) => {
 // POST login             **WORKIN HERE!
 
 app.post("/login", (req, res) => {
-  if (req.body.email && req.body.password) {
-    const email = req.body.email;
-    const password = req.body.password;
-    const user = users;
-  }
-  if (!req.body.email || !req.body.password) {
-    console.log("you didn't enter a username, redirecting");
-    res.redirect("/login");
+  const email = req.body.email;
+  const password = req.body.password;
+  const found = find(email, password);
+  const id = generateRandomString();
+  if (found) {
+    res.cookie("user_id", found);
+    res.redirect("/urls/");
   } else {
+    res.redirect("/login/");
   }
 });
 
@@ -165,7 +171,9 @@ app.post("/register", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     const id = registerUser(email, password);
-    //setting a user_id cookie and then redirecting
+    //if req body email is in users.... you cant register
+
+    //else
     res.cookie("user_id", id["id"]);
     res.redirect("/urls/");
   } else {
@@ -178,11 +186,6 @@ app.post("/register", (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect("/urls");
-});
-
-//POST DATABASE -> EDIT PAGE (A BUTTON LINK)              PERHAPS THIS CAN BE REMOVED!!!
-app.post("/urls/:id", (req, res) => {
-  res.redirect(`/urls/${req.params.id}`);
 });
 
 //POST RENAME
