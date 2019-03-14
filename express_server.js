@@ -14,8 +14,8 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-//DEFAULT USERS
-const users = {
+//this is the userStoretore
+const userStore = {
   userRandomID: {
     id: "userRandomID",
     email: "user@example.com",
@@ -42,23 +42,39 @@ function generateRandomString() {
 //function add a new user to user object
 function registerUser(email, password) {
   const id = generateRandomString();
-  const newUSer = {
-    id: id,
-    email: email,
-    password: password
+  const newUser = {
+    id,
+    email,
+    password
   };
-  users[id] = newUSer;
-  return newUSer;
+  userStore[id] = newUser;
+  return newUser;
+}
+
+function findUser(email) {
+  let userArr = Object.values(userStore);
+  for (let i = 0; i < userArr.length; i++) {
+    if (userArr[i].email == email) {
+      return userArr[i];
+    }
+  }
 }
 
 //function find if user is in DB
-function find(email, password) {
-  let userArr = Object.values(users);
-  for (let i = 0; i < userArr.length; i++) {
-    if (userArr[i].email == email && userArr[i].password == password) {
-      return userArr[i].id;
+function authUser(email, password) {
+  const user = findUser(email);
+  if (user.password == password) {
+    return user;
+  }
+}
+
+function checkIfEmailIsInStore(email) {
+  for (let userId in userStore) {
+    if (userStore[userId].email === email) {
+      return true;
     }
   }
+  return false;
 }
 
 //*********GET REQUESTS********
@@ -71,7 +87,7 @@ app.get("/", (req, res) => {
 
 //PAGE JSON OBJECT OF URL DATABASE
 app.get("/urls.json", (req, res) => {
-  res.json(users);
+  res.json(userStore);
 });
 
 //Login page
@@ -95,34 +111,35 @@ app.get("/register", (req, res) => {
 
 //Url index page
 app.get("/urls", (req, res) => {
-  if (!req.cookies.user_id) {
-    res.redirect(/login/);
-  } else {
-    const templateVars = {
-      urls: urlDatabase,
-      user_id: req.cookies.user_id,
-      email: users[req.cookies.user_id]["email"]
-    };
-    res.render("urls_index", templateVars);
-  }
+  // if (!req.cookies.user_id) {
+  //   res.redirect(/login/);
+  // } else {
+  console.log(req.cookies.user_id);
+  const templateVars = {
+    urls: urlDatabase,
+    user_id: req.cookies.user_id,
+    email: userStore[req.cookies.user_id]["email"]
+  };
+  res.render("urls_index", templateVars);
+  // }
 });
 
 //New TinyUrl page
 app.get("/urls/new", (req, res) => {
   const templateVars = {
     user_id: req.cookies.user_id,
-    email: users[req.cookies.user_id]["email"]
+    email: userStore[req.cookies.user_id]["email"]
   };
   res.render("urls_new", templateVars);
 });
 
-//Edit specific longURL
+//Edit specific longURL    working
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
     user_id: req.cookies.user_id,
-    email: users[req.cookies.user_id]["email"]
+    email: userStore[req.cookies.user_id]["email"]
   };
   res.render("urls_show", templateVars);
 });
@@ -155,8 +172,8 @@ app.post("/logout", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const found = find(email, password);
-  const id = generateRandomString();
+  const found = authUser(email, password).id;
+  // const id = generateRandomString();
   if (found) {
     res.cookie("user_id", found);
     res.redirect("/urls/");
@@ -167,18 +184,21 @@ app.post("/login", (req, res) => {
 
 //POST register endpoint
 app.post("/register", (req, res) => {
-  if (req.body.email && req.body.password) {
-    const email = req.body.email;
-    const password = req.body.password;
-    const id = registerUser(email, password);
-    //if req body email is in users.... you cant register
+  const email = req.body.email;
+  const password = req.body.password;
 
-    //else
-    res.cookie("user_id", id["id"]);
-    res.redirect("/urls/");
+  if (email && password) {
+    const existingEmail = checkIfEmailIsInStore(email);
+    if (!existingEmail) {
+      const newUser = registerUser(email, password);
+      res.cookie("user_id", newUser.id);
+      res.redirect("/urls/");
+    } else {
+      console.log("email taken");
+      res.redirect("/register/");
+    }
   } else {
-    res.status(400);
-    res.send("400 status code, Please try filling out the forms!");
+    res.redirect("/register/");
   }
 });
 
