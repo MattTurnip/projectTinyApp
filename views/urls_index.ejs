@@ -25,8 +25,10 @@
 
     <h3>My Urls:</h3>
 
-    <% for (let element in urls) { %> <% if(user_id == urls[element].userID) {
-    %>
+    <% if(!user_id){ %>
+    <p>Please login or register</p>
+    <% } else { %> <% for (let element in urls) { %> <% if(user_id ==
+    urls[element].userID) { %>
     <ul>
       <li>
         <strong><%= element %></strong>: <%= urls[element].longURL %>
@@ -46,6 +48,6 @@
         </div>
       </li>
     </ul>
-    <% } %> <% } %>
+    <% } %> <% } %> <% } %>
   </body>
 </html>
