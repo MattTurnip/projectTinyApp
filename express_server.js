@@ -28,55 +28,6 @@ const userStore = {
   }
 };
 
-//function generate a random string
-function generateRandomString() {
-  let text = "";
-  const letNums =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for (let i = 0; i < 6; i++) {
-    text += letNums.charAt(Math.floor(Math.random() * letNums.length));
-  }
-  return text;
-}
-
-//function add a new user to user object
-function registerUser(email, password) {
-  const id = generateRandomString();
-  const newUser = {
-    id,
-    email,
-    password
-  };
-  userStore[id] = newUser;
-  return newUser;
-}
-
-//function find if user is in DB
-function authUser(email, password) {
-  const user = findUser(email);
-  if (user.password == password) {
-    return user;
-  }
-}
-
-function findUser(email) {
-  let userArr = Object.values(userStore);
-  for (let i = 0; i < userArr.length; i++) {
-    if (userArr[i].email == email) {
-      return userArr[i];
-    }
-  }
-}
-
-function checkIfEmailIsInStore(email) {
-  for (let userId in userStore) {
-    if (userStore[userId].email === email) {
-      return userStore[userId];
-    }
-  }
-  return false;
-}
-
 //*********GET REQUESTS********
 
 //PAGE REDIRECT FROM / TO NEW
@@ -183,7 +134,6 @@ app.post("/login", (req, res) => {
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-
   if (email && password) {
     const existingEmail = checkIfEmailIsInStore(email);
     if (!existingEmail) {
@@ -192,7 +142,7 @@ app.post("/register", (req, res) => {
       res.redirect("/urls/");
     } else {
       console.log("email taken");
-      res.send("email taken");
+      res.status(400).send("email taken");
     }
   } else {
     res.redirect("/register/");
@@ -216,3 +166,54 @@ app.post("/urls/:shortURL/update", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+//Functions
+
+//function generate a random string
+function generateRandomString() {
+  let text = "";
+  const letNums =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  for (let i = 0; i < 6; i++) {
+    text += letNums.charAt(Math.floor(Math.random() * letNums.length));
+  }
+  return text;
+}
+
+//function add a new user to user object
+function registerUser(email, password) {
+  const id = generateRandomString();
+  const newUser = {
+    id,
+    email,
+    password
+  };
+  userStore[id] = newUser;
+  return newUser;
+}
+
+// //function find if user is in DB
+// function authUser(email, password) {
+//   const user = findUser(email);
+//   if (user.password == password) {
+//     return user;
+//   }
+// }
+
+// function findUser(email) {
+//   let userArr = Object.values(userStore);
+//   for (let i = 0; i < userArr.length; i++) {
+//     if (userArr[i].email == email) {
+//       return userArr[i];
+//     }
+//   }
+// }
+
+function checkIfEmailIsInStore(email) {
+  for (let userId in userStore) {
+    if (userStore[userId].email === email) {
+      return userStore[userId];
+    }
+  }
+  return false;
+}
