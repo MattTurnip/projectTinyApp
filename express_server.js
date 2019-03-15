@@ -3,18 +3,15 @@ const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
+const bcrypt = require('bcrypt');
 const PORT = 8080; // default port 8080
 app.set("view engine", "ejs"); //set ejs as the view engine
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//DEFAULT URLS
-var urlDatabase = {
-  b2xVn2: { longURL: "http://www.lighthouselabs.ca", userID: "userRandomID" },
-  "9sm5xK": "http://www.google.com"
-};
 
-//this is the userStoretore
+const urlDatabase = {};
+
 const userStore = {
   userRandomID: {
     id: "userRandomID",
@@ -28,25 +25,21 @@ const userStore = {
   }
 };
 
-//**********************************GET REQUESTS***************************************
+//Get Requests
 
-//----------------------------PAGE REDIRECT FROM / TO NEW
 app.get("/", (req, res) => {
   // res.send("Hello!");
   res.redirect("/urls/new");
 });
 
-//----------------------------PAGE JSON OBJECT OF URL DATABASE
 app.get("/users.json", (req, res) => {
   res.json(userStore);
 });
 
-//----------------------------PAGE JSON OBJECT OF URL DATABASE
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-//----------------------------Login page
 app.get("/login", (req, res) => {
   const templateVars = {
     user_id: req.cookies.user_id,
@@ -55,7 +48,6 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
-//----------------------------Register Page
 app.get("/register", (req, res) => {
   const templateVars = {
     user_id: null //because there is no user
@@ -63,7 +55,6 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 });
 
-//----------------------------Url index page
 app.get("/urls", (req, res) => {
   if (!req.cookies.user_id) {
     res.redirect("register");
@@ -77,7 +68,6 @@ app.get("/urls", (req, res) => {
   }
 });
 
-//----------------------------New TinyUrl page
 app.get("/urls/new", (req, res) => {
   if (!req.cookies.user_id) {
     res.redirect("/register/");
@@ -90,7 +80,6 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
-//----------------------------Edit specific longURL    working
 app.get("/urls/:shortURL", (req, res) => {
   if (req.cookies.user_id) {
     const templateVars = {
@@ -105,15 +94,13 @@ app.get("/urls/:shortURL", (req, res) => {
   }
 });
 
-//----------------------------Redirect to page
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
-//************************************POST REQUESTS*************************************
+//Post requests
 
-//----------------------------POST GENERATE RANDOM STRING LENGTH 6
 app.post("/urls", (req, res) => {
   let key = generateRandomString();
 
@@ -124,33 +111,35 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${key}`);
 });
 
-//----------------------------POST LOGOUT
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
   res.redirect("/login/");
 });
 
-//----------------------------POST login
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const existingEmail = checkIfEmailIsInStore(email);
-  if (email === existingEmail.email && password === existingEmail.password) {
-    res.cookie("user_id", existingEmail.id);
+  const userObject = checkIfEmailIsInStore(email);
+  const pwAuth = bcrypt.compareSync(password, userObject.password);
+  if (email === userObject.email && pwAuth) {
+    res.cookie("user_id", userObject.id);
     res.redirect("/urls/");
   } else {
     res.status(403).send("error");
   }
 });
 
-//----------------------------POST register endpoint
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
+
   if (email && password) {
     const existingEmail = checkIfEmailIsInStore(email);
     if (!existingEmail) {
-      const newUser = registerUser(email, password);
+      const newUser = registerUser(email, hashedPassword);
       res.cookie("user_id", newUser.id);
       res.redirect("/urls/");
     } else {
@@ -162,7 +151,6 @@ app.post("/register", (req, res) => {
   }
 });
 
-//----------------------------POST DELETE URL FROM DATABASE
 app.post("/urls/:shortURL/delete", (req, res) => {
   if (req.cookies.user_id === urlDatabase[req.params.shortURL].userID) {
     delete urlDatabase[req.params.shortURL];
@@ -173,7 +161,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   }
 });
 
-//----------------------------POST RENAME
 app.post("/urls/:shortURL/update", (req, res) => {
   if (req.cookies.user_id === urlDatabase[req.params.shortURL].userID) {
     let newName = req.body.longURLRename;
@@ -185,10 +172,12 @@ app.post("/urls/:shortURL/update", (req, res) => {
   }
 });
 
-//----------------------------LISTEN IN PORT
+//Port
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
 
 //Functions
 
@@ -196,7 +185,7 @@ function generateRandomString() {
   let text = "";
   const letNums =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 8; i++) {
     text += letNums.charAt(Math.floor(Math.random() * letNums.length));
   }
   return text;
@@ -221,21 +210,3 @@ function checkIfEmailIsInStore(email) {
   }
   return false;
 }
-
-//the below functions are unused because I DONT UNDERSTAND THEM!!!!!!
-// //function find if user is in DB
-// function authUser(email, password) {
-//   const user = findUser(email);
-//   if (user.password == password) {
-//     return user;
-//   }
-// }
-
-// function findUser(email) {
-//   let userArr = Object.values(userStore);
-//   for (let i = 0; i < userArr.length; i++) {
-//     if (userArr[i].email == email) {
-//       return userArr[i];
-//     }
-//   }
-// }
