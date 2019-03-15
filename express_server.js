@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //DEFAULT URLS
 var urlDatabase = {
-  b2xVn2: "http://www.lighthouselabs.ca",
+  b2xVn2: { longURL: "http://www.lighthouselabs.ca", userID: "userRandomID" },
   "9sm5xK": "http://www.google.com"
 };
 
@@ -37,8 +37,13 @@ app.get("/", (req, res) => {
 });
 
 //PAGE JSON OBJECT OF URL DATABASE
-app.get("/urls.json", (req, res) => {
+app.get("/users.json", (req, res) => {
   res.json(userStore);
+});
+
+//PAGE JSON OBJECT OF URL DATABASE
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
 });
 
 //Login page
@@ -53,8 +58,6 @@ app.get("/login", (req, res) => {
 //Register Page
 app.get("/register", (req, res) => {
   const templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
     user_id: null //because there is no user
   };
   res.render("register", templateVars);
@@ -63,7 +66,7 @@ app.get("/register", (req, res) => {
 //Url index page
 app.get("/urls", (req, res) => {
   if (!req.cookies.user_id) {
-    res.redirect(/login/);
+    res.redirect(/register/);
   } else {
     const templateVars = {
       urls: urlDatabase,
@@ -76,18 +79,22 @@ app.get("/urls", (req, res) => {
 
 //New TinyUrl page
 app.get("/urls/new", (req, res) => {
-  const templateVars = {
-    user_id: req.cookies.user_id,
-    email: userStore[req.cookies.user_id]["email"]
-  };
-  res.render("urls_new", templateVars);
+  if (!req.cookies.user_id) {
+    res.redirect("/register/");
+  } else {
+    const templateVars = {
+      user_id: req.cookies.user_id,
+      email: userStore[req.cookies.user_id]["email"]
+    };
+    res.render("urls_new", templateVars);
+  }
 });
 
 //Edit specific longURL    working
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL].longURL,
     user_id: req.cookies.user_id,
     email: userStore[req.cookies.user_id]["email"]
   };
@@ -96,19 +103,21 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //Redirect to page
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
 //*********POST REQUESTS********
 
-//POST GENERATE RANDOM STRING LENGTH 6
+//POST GENERATE RANDOM STRING LENGTH 6  ***working here
 app.post("/urls", (req, res) => {
-  if (true) {
-    let key = generateRandomString();
-    urlDatabase[key] = req.body.longURL;
-    res.redirect(`/urls/${key}`);
-  }
+  let key = generateRandomString();
+
+  urlDatabase[key] = {
+    longURL: req.body.longURL,
+    userID: req.cookies.user_id
+  };
+  res.redirect(`/urls/${key}`);
 });
 
 // POST LOGOUT
@@ -117,7 +126,7 @@ app.post("/logout", (req, res) => {
   res.redirect("/login/");
 });
 
-// POST login             **WORKIN HERE!
+// POST login
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
