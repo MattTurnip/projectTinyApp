@@ -17,7 +17,7 @@ app.use(cookieSession({
 
 //redirect to register page from root
 app.get("/", (req, res) => {
-  res.redirect("/register");
+  res.redirect("/login");
 });
 
 //dev userStore.json to ensure hashed passwords
@@ -179,6 +179,7 @@ app.listen(PORT, () => {
 
 //***Functions*** 
 
+//generate a random string for new tinyurls
 function genRandomStr() {
   let text = "";
   const letNums =
@@ -189,6 +190,7 @@ function genRandomStr() {
   return text;
 }
 
+//add a new user to userStore
 function registerUser(email, password) {
   const id = genRandomStr();
   const newUser = {
@@ -200,6 +202,7 @@ function registerUser(email, password) {
   return newUser;
 }
 
+//function checks if email is in userStore and returns that object
 function checkEmailInStore(email) {
   for (let userId in userStore) {
     if (userStore[userId].email === email) {
