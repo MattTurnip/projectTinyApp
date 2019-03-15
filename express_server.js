@@ -28,25 +28,25 @@ const userStore = {
   }
 };
 
-//*********GET REQUESTS********
+//**********************************GET REQUESTS***************************************
 
-//PAGE REDIRECT FROM / TO NEW
+//----------------------------PAGE REDIRECT FROM / TO NEW
 app.get("/", (req, res) => {
   // res.send("Hello!");
   res.redirect("/urls/new");
 });
 
-//PAGE JSON OBJECT OF URL DATABASE
+//----------------------------PAGE JSON OBJECT OF URL DATABASE
 app.get("/users.json", (req, res) => {
   res.json(userStore);
 });
 
-//PAGE JSON OBJECT OF URL DATABASE
+//----------------------------PAGE JSON OBJECT OF URL DATABASE
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-//Login page
+//----------------------------Login page
 app.get("/login", (req, res) => {
   const templateVars = {
     user_id: req.cookies.user_id,
@@ -55,7 +55,7 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
-//Register Page
+//----------------------------Register Page
 app.get("/register", (req, res) => {
   const templateVars = {
     user_id: null //because there is no user
@@ -63,7 +63,7 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 });
 
-//Url index page
+//----------------------------Url index page
 app.get("/urls", (req, res) => {
   if (!req.cookies.user_id) {
     res.redirect(/register/);
@@ -77,7 +77,7 @@ app.get("/urls", (req, res) => {
   }
 });
 
-//New TinyUrl page
+//----------------------------New TinyUrl page
 app.get("/urls/new", (req, res) => {
   if (!req.cookies.user_id) {
     res.redirect("/register/");
@@ -90,7 +90,7 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
-//Edit specific longURL    working
+//----------------------------Edit specific longURL    working
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
@@ -101,15 +101,15 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-//Redirect to page
+//----------------------------Redirect to page
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
-//*********POST REQUESTS********
+//************************************POST REQUESTS*************************************
 
-//POST GENERATE RANDOM STRING LENGTH 6  ***working here
+//----------------------------POST GENERATE RANDOM STRING LENGTH 6
 app.post("/urls", (req, res) => {
   let key = generateRandomString();
 
@@ -120,13 +120,13 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${key}`);
 });
 
-// POST LOGOUT
+//----------------------------POST LOGOUT
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
   res.redirect("/login/");
 });
 
-// POST login
+//----------------------------POST login
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -139,7 +139,7 @@ app.post("/login", (req, res) => {
   }
 });
 
-//POST register endpoint
+//----------------------------POST register endpoint
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -158,27 +158,26 @@ app.post("/register", (req, res) => {
   }
 });
 
-//POST DELETE URL FROM DATABASE
+//----------------------------POST DELETE URL FROM DATABASE
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect("/urls");
 });
 
-//POST RENAME
+//----------------------------POST RENAME
 app.post("/urls/:shortURL/update", (req, res) => {
   let newName = req.body.longURLRename;
   urlDatabase[req.params.shortURL].longURL = newName;
   res.redirect("/urls");
 });
 
-//LISTEN IN PORT
+//----------------------------LISTEN IN PORT
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
 //Functions
 
-//function generate a random string
 function generateRandomString() {
   let text = "";
   const letNums =
@@ -189,7 +188,6 @@ function generateRandomString() {
   return text;
 }
 
-//function add a new user to user object
 function registerUser(email, password) {
   const id = generateRandomString();
   const newUser = {
@@ -201,6 +199,16 @@ function registerUser(email, password) {
   return newUser;
 }
 
+function checkIfEmailIsInStore(email) {
+  for (let userId in userStore) {
+    if (userStore[userId].email === email) {
+      return userStore[userId];
+    }
+  }
+  return false;
+}
+
+//the below functions are unused because I DONT UNDERSTAND THEM!!!!!!
 // //function find if user is in DB
 // function authUser(email, password) {
 //   const user = findUser(email);
@@ -217,12 +225,3 @@ function registerUser(email, password) {
 //     }
 //   }
 // }
-
-function checkIfEmailIsInStore(email) {
-  for (let userId in userStore) {
-    if (userStore[userId].email === email) {
-      return userStore[userId];
-    }
-  }
-  return false;
-}
