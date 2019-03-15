@@ -192,7 +192,7 @@ app.post("/register", (req, res) => {
       res.redirect("/urls/");
     } else {
       console.log("email taken");
-      res.redirect("/register/");
+      res.send("email taken");
     }
   } else {
     res.redirect("/register/");
