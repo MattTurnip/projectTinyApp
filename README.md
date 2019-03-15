@@ -31,6 +31,15 @@ To run TinyApp:
 * go to _TinyUrl_ , register and flip your URL into the form (╯°□°）╯ ︵ ˥ɹ∩
 * ༼ つ ◕_◕ ༽つ  ᵘʳˡ your URL is now tiny-fied just for you!
 
+some snaps:
+![alt text][screenshot 1]
+[screenshot 1]: /img/screen1 "Login to your TinyApp"
+![alt text][screenshot 2]
+[screenshot 2]: /img/screen2 "shorten the url to your favourite site"
+![alt text][screenshot 2]
+[screenshot 2]: /img/screen3 "check out all of your own personal TinyApp tiny urls"
 
+
+Big thanks to all the Lighthouse Labs students and mentors for all their love and support!
 
 **Bye bye for now!**
