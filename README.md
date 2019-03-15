@@ -32,9 +32,9 @@ To run TinyApp:
 * ༼ つ ◕_◕ ༽つ  ᵘʳˡ your URL is now tiny-fied just for you!
 
 some snaps:
-!["Login to your TinyApp"](https://raw.githubusercontent.com/MattTurnip/projectTinyApp/branch/path/to/img/screen1.png) 
-!["shorten the url to your favourite site"](https://raw.githubusercontent.com/MattTurnip/projectTinyApp/branch/path/to/img/screen2.png) 
-!["check out all of your own personal TinyApp tiny urls"](https://raw.githubusercontent.com/MattTurnip/projectTinyApp/branch/path/to/img/screen3.png) 
+!["Login to your TinyApp"](/img/screen1.png) 
+!["shorten the url to your favourite site"](img/screen2.png) 
+!["check out all of your own personal TinyApp tiny urls"](/img/screen3.png) 
 
 Big thanks to all the Lighthouse Labs students and mentors for all their love and support!
 
