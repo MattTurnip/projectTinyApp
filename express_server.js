@@ -1,27 +1,20 @@
-// USE THIS CODE TO RUN NODEMON : npm start
 const express = require("express");
 const app = express();
 const cookieSession = require('cookie-session');
 const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
-const PORT = 8080; // default port 8080
-app.set("view engine", "ejs"); //set ejs as the view engine
+const userStore = {};
+const urlDatabase = {};
+const PORT = 8080;
+app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use(cookieSession({
   name: 'session',
   keys: ["here's a secret key, baby!"],
 }))
 
-const urlDatabase = {};
-
-const userStore = {};
-
-//Get Requests
-
 app.get("/", (req, res) => {
-  // res.send("Hello!");
-  res.redirect("/urls/new");
+  res.redirect("/register");
 });
 
 app.get("/users.json", (req, res) => {
@@ -91,11 +84,9 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-//Post requests
 
 app.post("/urls", (req, res) => {
   let key = generateRandomString();
-
   urlDatabase[key] = {
     longURL: req.body.longURL,
     userID: req.session.user_id
@@ -112,7 +103,7 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const userObject = checkIfEmailIsInStore(email);
-  const pwAuth = bcrypt.compareSync(password, userObject.password);
+  const pwAuth = password && userObject.password && bcrypt.compareSync(password, userObject.password);
   if (email === userObject.email && pwAuth) {
     req.session.user_id = userObject.id;
     res.redirect("/urls/");
@@ -161,14 +152,10 @@ app.post("/urls/:shortURL/update", (req, res) => {
   }
 });
 
-//Port
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-
-//Functions
 
 function generateRandomString() {
   let text = "";

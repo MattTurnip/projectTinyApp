@@ -16,9 +16,7 @@
   <header>
     <% include partials/_header %>
   </header>
-
   <h3>My Urls:</h3>
-
   <% if(!user_id){ %>
   <p>Please login or register</p>
   <% } else { %> <% for (let element in urls) { %> <% if(user_id ==
