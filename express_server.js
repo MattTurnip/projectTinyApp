@@ -51,6 +51,14 @@ function registerUser(email, password) {
   return newUser;
 }
 
+//function find if user is in DB
+function authUser(email, password) {
+  const user = findUser(email);
+  if (user.password == password) {
+    return user;
+  }
+}
+
 function findUser(email) {
   let userArr = Object.values(userStore);
   for (let i = 0; i < userArr.length; i++) {
@@ -60,18 +68,10 @@ function findUser(email) {
   }
 }
 
-//function find if user is in DB
-function authUser(email, password) {
-  const user = findUser(email);
-  if (user.password == password) {
-    return user;
-  }
-}
-
 function checkIfEmailIsInStore(email) {
   for (let userId in userStore) {
     if (userStore[userId].email === email) {
-      return true;
+      return userStore[userId];
     }
   }
   return false;
@@ -111,17 +111,16 @@ app.get("/register", (req, res) => {
 
 //Url index page
 app.get("/urls", (req, res) => {
-  // if (!req.cookies.user_id) {
-  //   res.redirect(/login/);
-  // } else {
-  console.log(req.cookies.user_id);
-  const templateVars = {
-    urls: urlDatabase,
-    user_id: req.cookies.user_id,
-    email: userStore[req.cookies.user_id]["email"]
-  };
-  res.render("urls_index", templateVars);
-  // }
+  if (!req.cookies.user_id) {
+    res.redirect(/login/);
+  } else {
+    const templateVars = {
+      urls: urlDatabase,
+      user_id: req.cookies.user_id,
+      email: userStore[req.cookies.user_id]["email"]
+    };
+    res.render("urls_index", templateVars);
+  }
 });
 
 //New TinyUrl page
@@ -168,17 +167,15 @@ app.post("/logout", (req, res) => {
 });
 
 // POST login             **WORKIN HERE!
-
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const found = authUser(email, password).id;
-  // const id = generateRandomString();
-  if (found) {
-    res.cookie("user_id", found);
+  const existingEmail = checkIfEmailIsInStore(email);
+  if (email === existingEmail.email && password === existingEmail.password) {
+    res.cookie("user_id", existingEmail.id);
     res.redirect("/urls/");
   } else {
-    res.redirect("/login/");
+    res.status(403).send("error");
   }
 });
 
