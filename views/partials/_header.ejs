@@ -1,16 +1,20 @@
 <!-- views/partials/header.ejs -->
 
-<h1>TinyApp</h1>
+<h1>TinyApp ༼ つ ◕_◕ ༽つ ᵘʳˡ </h1>
 
 <% if (!user_id) { %>
-<a href="/register">Register</a> | <a href="/login">Login</a>
+<div>
+  <a href="/register">Register</a> | <a href="/login">Login</a>
+</div>
 
 <% } else { %>
-<a href="/urls/">URLS</a> | <a href="/urls/new">Create a new TinyURL</a>
+<div>
+  <a href="/urls/">URLS</a> | <a href="/urls/new">Create a new TinyURL</a>
+</div>
 <div class="btn-group" role="group">
   <p>Logged in as <em><%= email %></em></p>
   <form method="POST" action="/logout">
-    <button type="submit" class="btn btn-primary">Logout</button>
+    <button type="submit" class="btn btn-primary btn-sm ">Logout</button>
   </form>
 </div>
 <% } %>

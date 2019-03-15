@@ -1,53 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
 
-    <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
-      crossorigin="anonymous"
-    />
-    <title>TinyApp</title>
-  </head>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-  <body style="font-size:20px; padding:50px;">
-    <!-- Add EJS code here -->
-    <header>
-      <% include partials/_header %>
-    </header>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous" />
+  <title>TinyApp</title>
+</head>
 
-    <h3>My Urls:</h3>
+<body style="font-size:20px; padding:50px;">
+  <!-- Add EJS code here -->
+  <header>
+    <% include partials/_header %>
+  </header>
 
-    <% if(!user_id){ %>
-    <p>Please login or register</p>
-    <% } else { %> <% for (let element in urls) { %> <% if(user_id ==
+  <h3>My Urls:</h3>
+
+  <% if(!user_id){ %>
+  <p>Please login or register</p>
+  <% } else { %> <% for (let element in urls) { %> <% if(user_id ==
     urls[element].userID) { %>
-    <ul>
-      <li>
-        <strong><%= element %></strong>: <%= urls[element].longURL %>
-        <div class="btn-group" role="group">
+  <ul>
+    <li>
+      <strong><a href="/u/<%= element %>""><%= element %></a></strong> TinyUrl to <%= urls[element].longURL %>
+      <div class=" btn-group" role="group">
           <form method="POST" action="/urls/<%= element %>/delete">
-            <button type="submit" class="btn btn-danger">Delete</button>
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
           </form>
 
-          <button type="submit" class="btn btn-primary">
-            <a
-              href="/urls/<%= element %>"
-              class="text-white"
-              style="text-decoration: none"
-              >Edit</a
-            >
+          <button type="submit" class="btn btn-primary btn-sm">
+            <a href="/urls/<%= element %>" class="text-white" style="text-decoration: none">Edit</a>
           </button>
-        </div>
-      </li>
-    </ul>
-    <% } %> <% } %> <% } %>
-  </body>
+          </div>
+    </li>
+  </ul>
+  <% } %> <% } %> <% } %>
+</body>
+
 </html>
