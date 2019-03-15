@@ -28,7 +28,7 @@
     <% for (let element in urls) { %>
     <ul>
       <li>
-        <strong><%= element %></strong>: <%= urls[element] %>
+        <strong><%= element %></strong>: <%= urls[element].longURL %>
         <div class="btn-group" role="group">
           <form method="POST" action="/urls/<%= element %>/delete">
             <button type="submit" class="btn btn-danger">Delete</button>
