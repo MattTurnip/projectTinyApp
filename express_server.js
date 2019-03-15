@@ -66,7 +66,7 @@ app.get("/register", (req, res) => {
 //----------------------------Url index page
 app.get("/urls", (req, res) => {
   if (!req.cookies.user_id) {
-    res.redirect(/register/);
+    res.redirect("register");
   } else {
     const templateVars = {
       urls: urlDatabase,
@@ -92,13 +92,17 @@ app.get("/urls/new", (req, res) => {
 
 //----------------------------Edit specific longURL    working
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
-    user_id: req.cookies.user_id,
-    email: userStore[req.cookies.user_id]["email"]
-  };
-  res.render("urls_show", templateVars);
+  if (req.cookies.user_id) {
+    const templateVars = {
+      shortURL: req.params.shortURL,
+      longURL: urlDatabase[req.params.shortURL].longURL,
+      user_id: req.cookies.user_id,
+      email: userStore[req.cookies.user_id]["email"]
+    };
+    res.render("urls_show", templateVars);
+  } else {
+    res.status(403).send("can't edit someone else's urls");
+  }
 });
 
 //----------------------------Redirect to page
@@ -160,15 +164,25 @@ app.post("/register", (req, res) => {
 
 //----------------------------POST DELETE URL FROM DATABASE
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect("/urls");
+  if (req.cookies.user_id === urlDatabase[req.params.shortURL].userID) {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect("/urls");
+  } else {
+    res.status(403).send("Cannot delete someone else's urls");
+    console.log("cannot delete");
+  }
 });
 
 //----------------------------POST RENAME
 app.post("/urls/:shortURL/update", (req, res) => {
-  let newName = req.body.longURLRename;
-  urlDatabase[req.params.shortURL].longURL = newName;
-  res.redirect("/urls");
+  if (req.cookies.user_id === urlDatabase[req.params.shortURL].userID) {
+    let newName = req.body.longURLRename;
+    urlDatabase[req.params.shortURL].longURL = newName;
+    res.redirect("/urls");
+  } else {
+    res.status(403).send("Cannot edit someone else's urls");
+    console.log("cannot edit");
+  }
 });
 
 //----------------------------LISTEN IN PORT
