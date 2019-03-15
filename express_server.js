@@ -10,21 +10,27 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieSession({
   name: 'session',
-  keys: ["here's a secret key, baby!"],
+  keys: ["T0nY 5oPr4n0 I5 Schr)D1ng3Rs C4t oF TV"],
 }))
 
+//***Get Requests***
+
+//redirect to register page from root
 app.get("/", (req, res) => {
   res.redirect("/register");
 });
 
+//dev userStore.json to ensure hashed passwords
 app.get("/users.json", (req, res) => {
   res.json(userStore);
 });
 
+//dev urlDatabase.json to check ids match with users
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+//login page
 app.get("/login", (req, res) => {
   const templateVars = {
     user_id: req.session.user_id,
@@ -33,13 +39,15 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
+//register page
 app.get("/register", (req, res) => {
   const templateVars = {
-    user_id: null //because there is no user
+    user_id: null
   };
   res.render("register", templateVars);
 });
 
+//url index
 app.get("/urls", (req, res) => {
   if (!req.session.user_id) {
     res.redirect("register");
@@ -53,6 +61,7 @@ app.get("/urls", (req, res) => {
   }
 });
 
+//edit page
 app.get("/urls/new", (req, res) => {
   if (!req.session.user_id) {
     res.redirect("/register/");
@@ -65,6 +74,7 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
+//edit long url
 app.get("/urls/:shortURL", (req, res) => {
   if (req.session.user_id) {
     const templateVars = {
@@ -79,14 +89,17 @@ app.get("/urls/:shortURL", (req, res) => {
   }
 });
 
+//redirect to actual website
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
+//***Post Requests***
 
+//create new tiny url
 app.post("/urls", (req, res) => {
-  let key = generateRandomString();
+  let key = genRandomStr();
   urlDatabase[key] = {
     longURL: req.body.longURL,
     userID: req.session.user_id
@@ -94,30 +107,13 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${key}`);
 });
 
-app.post("/logout", (req, res) => {
-  req.session = null;
-  res.redirect("/login/");
-});
-
-app.post("/login", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const userObject = checkIfEmailIsInStore(email);
-  const pwAuth = password && userObject.password && bcrypt.compareSync(password, userObject.password);
-  if (email === userObject.email && pwAuth) {
-    req.session.user_id = userObject.id;
-    res.redirect("/urls/");
-  } else {
-    res.status(403).send("error");
-  }
-});
-
+//register new user
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
   if (email && password) {
-    const existingEmail = checkIfEmailIsInStore(email);
+    const existingEmail = checkEmailInStore(email);
     if (!existingEmail) {
       const newUser = registerUser(email, hashedPassword);
       req.session.user_id = newUser.id;
@@ -131,6 +127,27 @@ app.post("/register", (req, res) => {
   }
 });
 
+//user login
+app.post("/login", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const userObject = checkEmailInStore(email);
+  const pwAuth = password && userObject.password && bcrypt.compareSync(password, userObject.password);
+  if (email === userObject.email && pwAuth) {
+    req.session.user_id = userObject.id;
+    res.redirect("/urls/");
+  } else {
+    res.status(403).send("error");
+  }
+});
+
+//user logout
+app.post("/logout", (req, res) => {
+  req.session = null;
+  res.redirect("/login/");
+});
+
+//delete url
 app.post("/urls/:shortURL/delete", (req, res) => {
   if (req.session.user_id === urlDatabase[req.params.shortURL].userID) {
     delete urlDatabase[req.params.shortURL];
@@ -141,6 +158,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   }
 });
 
+//change long url
 app.post("/urls/:shortURL/update", (req, res) => {
   if (req.session.user_id === urlDatabase[req.params.shortURL].userID) {
     let newName = req.body.longURLRename;
@@ -152,12 +170,16 @@ app.post("/urls/:shortURL/update", (req, res) => {
   }
 });
 
+//***Ports***
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-function generateRandomString() {
+
+//***Functions*** 
+
+function genRandomStr() {
   let text = "";
   const letNums =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -168,7 +190,7 @@ function generateRandomString() {
 }
 
 function registerUser(email, password) {
-  const id = generateRandomString();
+  const id = genRandomStr();
   const newUser = {
     id,
     email,
@@ -178,7 +200,7 @@ function registerUser(email, password) {
   return newUser;
 }
 
-function checkIfEmailIsInStore(email) {
+function checkEmailInStore(email) {
   for (let userId in userStore) {
     if (userStore[userId].email === email) {
       return userStore[userId];
