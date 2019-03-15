@@ -167,7 +167,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 //POST RENAME
 app.post("/urls/:shortURL/update", (req, res) => {
   let newName = req.body.longURLRename;
-  urlDatabase[req.params.shortURL] = newName;
+  urlDatabase[req.params.shortURL].longURL = newName;
   res.redirect("/urls");
 });
 
