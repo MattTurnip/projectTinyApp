@@ -28,7 +28,7 @@ To run TinyApp:
 ##### A common conundrum among internet users:
 
 * ¯\\\_(ツ)_/¯ at first you're like "what do I do with this URL?"
-* go to _TinyUrl_ , register and flip your URL into the form (╯°□°）╯ ︵ ˥ɹ∩
+* go to _TinyApp_ , register and flip your URL into the form (╯°□°）╯ ︵ ˥ɹ∩
 * ༼ つ ◕_◕ ༽つ  ᵘʳˡ your URL is now tiny-fied just for you!
 
 some snaps:
