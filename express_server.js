@@ -109,22 +109,26 @@ app.post("/urls", (req, res) => {
 
 //register new user
 app.post("/register", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const hashedPassword = bcrypt.hashSync(password, 10);
-  if (email && password) {
-    const existingEmail = checkEmailInStore(email);
-    if (!existingEmail) {
-      const newUser = registerUser(email, hashedPassword);
-      req.session.user_id = newUser.id;
-      res.redirect("/urls/");
-    } else {
-      console.log("email taken");
-      res.status(400).send("email taken");
-    }
+  if (!req.body.email || !req.body.password) {
+    res.status(403).send("error: please enter an email/password")
   } else {
-    res.redirect("/register/");
+    const email = req.body.email;
+    const password = req.body.password;
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    if (email && password) {
+      const existingEmail = checkEmailInStore(email);
+      if (!existingEmail) {
+        const newUser = registerUser(email, hashedPassword);
+        req.session.user_id = newUser.id;
+        res.redirect("/urls/");
+      } else {
+        res.status(403).send("error: email taken");
+      }
+    } else {
+      res.redirect("/register/");
+    }
   }
+
 });
 
 //user login
@@ -137,7 +141,7 @@ app.post("/login", (req, res) => {
     req.session.user_id = userObject.id;
     res.redirect("/urls/");
   } else {
-    res.status(403).send("error");
+    res.status(403).send("error: please enter valid email/password");
   }
 });
 
@@ -154,7 +158,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     res.redirect("/urls");
   } else {
     res.status(403).send("Cannot delete someone else's urls");
-    console.log("cannot delete");
   }
 });
 
